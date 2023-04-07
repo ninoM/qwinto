@@ -22,7 +22,7 @@ const Group = ({
 }) => {
   return (
     <div
-      className={`flex w-12 flex-col place-content-center place-items-center gap-y-2 rounded border border-slate-600 p-2  md:w-auto md:flex-row md:gap-x-2 ${className}`}
+      className={`flex w-12 flex-col place-content-center place-items-center gap-y-2 rounded border border-slate-600 p-2  landscape:w-auto landscape:flex-row landscape:gap-x-2 ${className}`}
     >
       {children}
     </div>
@@ -32,7 +32,7 @@ const Group = ({
 export default function Home() {
   return (
     <main className="flex flex-col p-2">
-      <div className="flex flex-row items-start justify-center gap-x-2 p-2 md:flex-col-reverse md:items-center md:justify-stretch md:gap-y-2">
+      <div className="flex flex-row items-start justify-center gap-x-2 p-2 landscape:flex-col-reverse landscape:items-center landscape:justify-stretch landscape:gap-y-2">
         <Group className="bg-violet-600">
           <Input />
           <Input />
@@ -45,7 +45,7 @@ export default function Home() {
           <Input />
           <Input special />
         </Group>
-        <Group className="mt-[42px] bg-yellow-500 md:ml-[82px] md:mt-auto">
+        <Group className="mt-[42px] bg-yellow-500 landscape:ml-[82px] landscape:mt-auto">
           <Input />
           <Input />
           <Input />
@@ -57,7 +57,7 @@ export default function Home() {
           <Input />
           <Input />
         </Group>
-        <Group className="mt-[84px] bg-orange-500 md:ml-[164px] md:mt-auto">
+        <Group className="mt-[84px] bg-orange-500 landscape:ml-[164px] landscape:mt-auto">
           <Input />
           <Input special />
           <Input />
