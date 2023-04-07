@@ -1,4 +1,4 @@
-import { FaultButton } from "./FaultButton";
+import { FaultButton } from "../components/FaultButton";
 
 const Input = ({ special, empty }: { special?: true; empty?: true }) => {
   if (empty) return <div className="w-8 h-8" />;
