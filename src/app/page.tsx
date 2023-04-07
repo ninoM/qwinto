@@ -31,7 +31,7 @@ const Group = ({
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-row items-center justify-center gap-x-2 p-2">
+    <main className="flex min-h-screen flex-row items-start justify-center gap-x-2 p-2">
       <Group className="bg-violet-600">
         <Input />
         <Input />
