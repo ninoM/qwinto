@@ -44,7 +44,7 @@ export default function Home() {
         <Input />
         <Input special />
       </Group> 
-       <Group className="mt-[85px] bg-yellow-500">
+       <Group className="mt-[42px] bg-yellow-500">
         <Input />
         <Input />
         <Input />
@@ -56,7 +56,7 @@ export default function Home() {
         <Input />
         <Input />
       </Group>
-       <Group className="mt-[170px] bg-orange-500">
+       <Group className="mt-[84px] bg-orange-500">
         <Input />
         <Input special/>
         <Input />
