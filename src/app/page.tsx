@@ -1,7 +1,7 @@
 const Input = ({ special, empty }: { special?: true; empty?: true }) => {
   if (empty) return <div className="w-8 h-8" />;
   return (
-    <div className="rounded-full text-black outline outline-1 outline-slate-400 overflow-hidden">
+    <div className="rounded-full text-black ring-1 ring-slate-400 overflow-hidden">
       <input
         type="text"
         pattern="[0-9]*"
