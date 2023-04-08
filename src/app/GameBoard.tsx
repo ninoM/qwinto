@@ -90,6 +90,8 @@ const calculateScore = (
   let pentagonScoretally = 0;
   const calculatedBoard = Object.keys(boardState).map((groupName, index) => {
     const typedGroupName = groupName as keyof typeof initialState;
+
+    /* CALCULATE PENTAGON SCORE */
     if (groupName === "group1") {
       PENTAGON_INDEX_POSITIONS[groupName as keyof typeof initialState].forEach(
         (pentagonIndexPosition) => {
@@ -135,6 +137,7 @@ const calculateScore = (
         }
       );
     }
+
     let filteredGroup = boardState[typedGroupName].filter((x) => x);
     if (filteredGroup.length === 9) {
       return parseInt(filteredGroup.at(-1) as string);
