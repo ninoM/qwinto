@@ -77,14 +77,65 @@ const Input = ({ special, empty, ...rest }: InputProps) => {
   );
 };
 
+const PENTAGON_INDEX_POSITIONS = {
+  group1: [1, 5],
+  group2: [7],
+  group3: [2, 9],
+};
+
 const calculateScore = (
   boardState: typeof initialState,
   faults: Array<boolean>
 ) => {
-  const calculatedBoard = Object.keys(boardState).map((groupName) => {
-    let filteredGroup = boardState[
-      groupName as keyof typeof initialState
-    ].filter((x) => x);
+  let pentagonScoretally = 0;
+  const calculatedBoard = Object.keys(boardState).map((groupName, index) => {
+    const typedGroupName = groupName as keyof typeof initialState;
+    if (groupName === "group1") {
+      PENTAGON_INDEX_POSITIONS[groupName as keyof typeof initialState].forEach(
+        (pentagonIndexPosition) => {
+          const pentagonValue =
+            boardState[typedGroupName][pentagonIndexPosition];
+          if (
+            pentagonValue &&
+            boardState["group2"][pentagonIndexPosition + 1] &&
+            boardState["group3"][pentagonIndexPosition + 2]
+          ) {
+            pentagonScoretally += parseInt(pentagonValue);
+          }
+        }
+      );
+    }
+    if (groupName === "group2") {
+      PENTAGON_INDEX_POSITIONS[groupName as keyof typeof initialState].forEach(
+        (pentagonIndexPosition) => {
+          const pentagonValue =
+            boardState[typedGroupName][pentagonIndexPosition];
+          if (
+            pentagonValue &&
+            boardState["group1"][pentagonIndexPosition - 1] &&
+            boardState["group3"][pentagonIndexPosition + 1]
+          ) {
+            pentagonScoretally += parseInt(pentagonValue);
+          }
+        }
+      );
+    }
+    if (groupName === "group3") {
+      PENTAGON_INDEX_POSITIONS[groupName as keyof typeof initialState].forEach(
+        (pentagonIndexPosition) => {
+          const pentagonValue =
+            boardState[typedGroupName][pentagonIndexPosition];
+          if (
+            pentagonValue &&
+            boardState["group1"][pentagonIndexPosition - 2] &&
+            boardState["group2"][pentagonIndexPosition - 1]
+          ) {
+            pentagonScoretally += parseInt(pentagonValue);
+          }
+        }
+      );
+    }
+    let filteredGroup = boardState[typedGroupName].filter((x) => x);
     if (filteredGroup.length === 9) {
       return parseInt(filteredGroup.at(-1) as string);
     } else {
@@ -93,7 +144,8 @@ const calculateScore = (
   });
 
   return (
-    calculatedBoard.reduce((acc, curr) => curr + acc, 0) -
+    calculatedBoard.reduce((acc, curr) => curr + acc, 0) +
+    pentagonScoretally -
     faults.filter((x) => x).length * 5
   );
 };
@@ -184,10 +236,7 @@ export const GameBoard = () => {
       </div>
       <AlertDialog>
         <AlertDialogTrigger asChild>
-          <button
-            className="self-center rounded-sm border border-slate-400 bg-green-900 p-1 hover:bg-green-800"
-            // onClick={handleCalculateClick}
-          >
+          <button className="self-center rounded-sm border border-slate-400 bg-green-900 p-1 hover:bg-green-800">
             Calculate Score
           </button>
         </AlertDialogTrigger>
