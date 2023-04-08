@@ -191,7 +191,7 @@ export const GameBoard = () => {
             <Input
               key={index}
               empty={value === undefined}
-              special={index === 8}
+              special={index === 7}
               value={value}
               onChange={(e) => {
                 handleInputChange(e.target.value, {
