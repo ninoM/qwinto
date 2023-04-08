@@ -2,12 +2,17 @@
 
 import React from "react";
 
-export const FaultButton = () => {
-  const [activated, setActivated] = React.useState(false);
+export const FaultButton = ({
+  onClick,
+  activated,
+}: {
+  onClick?: (newState: boolean) => void;
+  activated: boolean;
+}) => {
   return (
     <button
-      onClick={() => setActivated((currState) => !currState)}
-      className={`rounded-full w-8 h-8 ring-1 ring-slate-700 ${
+      onClick={() => onClick?.(!activated)}
+      className={`h-8 w-8 rounded-full ring-1 ring-slate-700 ${
         activated ? "bg-red-800" : "bg-slate-900"
       }`}
     >
