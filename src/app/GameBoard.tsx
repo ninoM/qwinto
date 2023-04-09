@@ -14,11 +14,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "~/components/AlertDialog";
+import { storageAvailable } from "~/lib/utils";
 
 const initialState = {
-  group1: ["", "", "", undefined, "", "", "", "", "", ""],
-  group2: ["", "", "", "", "", undefined, "", "", "", ""],
-  group3: ["", "", "", "", undefined, "", "", "", "", ""],
+  group1: ["", "", "", null, "", "", "", "", "", ""],
+  group2: ["", "", "", "", "", null, "", "", "", ""],
+  group3: ["", "", "", "", null, "", "", "", "", ""],
 };
 
 type ACTION_TYPE =
@@ -30,7 +31,8 @@ type ACTION_TYPE =
         value: string;
       };
     }
-  | { type: "reset" };
+  | { type: "reset" }
+  | { type: "initialize"; payload: typeof initialState };
 
 const reducer = (state: typeof initialState, action: ACTION_TYPE) => {
   switch (action.type) {
@@ -40,7 +42,8 @@ const reducer = (state: typeof initialState, action: ACTION_TYPE) => {
       return { ...state, [action.payload.groupName]: clonedGroup };
     case "reset":
       return initialState;
-
+    case "initialize":
+      return action.payload;
     default:
       return state;
   }
@@ -153,9 +156,47 @@ const calculateScore = (
   );
 };
 
+const saveToLocalStorage = ({
+  boardState,
+  faults,
+}: {
+  boardState?: typeof initialState;
+  faults?: Array<boolean>;
+}) => {
+  if (storageAvailable("localStorage")) {
+    if (boardState) {
+      localStorage.setItem("boardState", JSON.stringify(boardState));
+    }
+    if (faults) {
+      localStorage.setItem("faults", JSON.stringify(faults));
+    }
+  }
+};
+
+const loadFromLocalStorage = () => {
+  if (storageAvailable("localStorage")) {
+    const boardState = localStorage.getItem("boardState");
+    const faults = localStorage.getItem("faults");
+    return {
+      boardState: boardState
+        ? (JSON.parse(boardState) as typeof initialState)
+        : initialState,
+      faults: faults
+        ? (JSON.parse(faults) as Array<boolean>)
+        : [false, false, false, false],
+    };
+  } else {
+    return {
+      boardState: initialState,
+      faults: [false, false, false, false],
+    };
+  }
+};
+
 export const GameBoard = () => {
   const [state, dispatch] = React.useReducer(reducer, initialState);
   const [faults, setFaults] = React.useState([false, false, false, false]);
+  const [loading, setLoading] = React.useState(true);
 
   const handleInputChange = (
     value: string,
@@ -167,6 +208,15 @@ export const GameBoard = () => {
     dispatch({ type: "set", payload: { groupName, index, value: value } });
   };
 
+  React.useEffect(() => {
+    const stateFromLocalStorage = loadFromLocalStorage();
+    dispatch({ type: "initialize", payload: stateFromLocalStorage.boardState });
+    setFaults(stateFromLocalStorage.faults);
+    setLoading(false);
+  }, []);
+
+  if (loading) return null;
+
   return (
     <>
       <div className="flex flex-row items-start justify-center gap-x-2 p-2 landscape:flex-col-reverse landscape:items-center landscape:justify-stretch landscape:gap-y-2">
@@ -174,9 +224,9 @@ export const GameBoard = () => {
           {state.group3.map((value, index) => (
             <Input
               key={index}
-              empty={value === undefined}
+              empty={value === null}
               special={index === 2 || index === 9}
-              value={value}
+              value={value!}
               onChange={(e) => {
                 handleInputChange(e.target.value, {
                   groupName: "group3",
@@ -190,9 +240,9 @@ export const GameBoard = () => {
           {state.group2.map((value, index) => (
             <Input
               key={index}
-              empty={value === undefined}
+              empty={value === null}
               special={index === 7}
-              value={value}
+              value={value!}
               onChange={(e) => {
                 handleInputChange(e.target.value, {
                   groupName: "group2",
@@ -206,14 +256,17 @@ export const GameBoard = () => {
           {state.group1.map((value, index) => (
             <Input
               key={index}
-              empty={value === undefined}
+              empty={value === null}
               special={index === 1 || index === 5}
-              value={value}
+              value={value!}
               onChange={(e) => {
                 handleInputChange(e.target.value, {
                   groupName: "group1",
                   index,
                 });
+              }}
+              onBlur={() => {
+                saveToLocalStorage({ boardState: state });
               }}
             />
           ))}
@@ -230,6 +283,7 @@ export const GameBoard = () => {
                 setFaults((currFaults) => {
                   let clonedFaults = [...currFaults];
                   clonedFaults[index] = fault;
+                  saveToLocalStorage({ faults: clonedFaults });
                   return clonedFaults;
                 });
               }}
@@ -257,6 +311,10 @@ export const GameBoard = () => {
               onClick={() => {
                 dispatch({ type: "reset" });
                 setFaults([false, false, false, false]);
+                saveToLocalStorage({
+                  boardState: initialState,
+                  faults: [false, false, false, false],
+                });
               }}
             >
               Restart
