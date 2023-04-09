@@ -233,6 +233,9 @@ export const GameBoard = () => {
                   index,
                 });
               }}
+              onBlur={() => {
+                saveToLocalStorage({ boardState: state });
+              }}
             />
           ))}
         </Group>
@@ -248,6 +251,9 @@ export const GameBoard = () => {
                   groupName: "group2",
                   index,
                 });
+              }}
+              onBlur={() => {
+                saveToLocalStorage({ boardState: state });
               }}
             />
           ))}
